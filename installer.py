@@ -61,6 +61,7 @@ def download():
     soup = BeautifulSoup(requests.get('https://windows.php.net/download/').text, 'html.parser')
     lenk = 'https://windows.php.net' + soup.find('a', string='Zip').get('href')
     downloading_text.set('Downloading PHP...\n(' + lenk + ')')
+    phpini = requests.get('https://raw.githubusercontent.com/peppelg/PHPWindowsInstaller/master/php.ini').text
     if not os.path.exists(path):
         os.mkdir(path)
     with open(tempFilePath, 'wb') as f:
@@ -81,7 +82,10 @@ def download():
         zipObj.extractall(path)
     os.remove(tempFilePath)
     subprocess.Popen(['powershell.exe', '[Environment]::SetEnvironmentVariable("Path", "' + path + '", "User")'])
-    downloading_text.set('Done')
+    f = open(path + '\php.ini', 'w+')
+    f.write(phpini)
+    f.close()
+    downloading_text.set('Done.\nPls close this window.')
 
 
 
